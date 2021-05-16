@@ -1,0 +1,19 @@
+{
+  "editor.renderWhitespace": "boundary",
+  "editor.rulers": [
+    100
+  ],
+  "editor.cursorBlinking": "solid",
+  "editor.tabSize": 2,
+  "editor.renderLineHighlight": "gutter",
+  "editor.occurrencesHighlight": false,
+  "editor.selectionHighlight": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": false,
+  "workbench.iconTheme": "material-icon-theme",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.format.enable": true,
+  "eslint.alwaysShowStatus": true
+}
