@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import Routes from './routes'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Container from '@material-ui/core/Container'

@@ -35,36 +35,7 @@ const QuestionContainers = (props) => {
   const handleSortQuestions = useCallback(
     (list) => {
       const obj = {}
-      const defalut = [
-        {
-          category: 'General Knowledge',
-          type: 'multiple',
-          difficulty: 'easy',
-          question:
-            'What does the &#039;S&#039; stand for in the abbreviation SIM, as in SIM card? ',
-          correct_answer: 'Subscriber',
-          incorrect_answers: ['Single', 'Secure', 'Solid'],
-        },
-        {
-          category: 'General Knowledge',
-          type: 'multiple',
-          difficulty: 'hard',
-          question:
-            'Which of the following chemicals are found in eggplant seeds?',
-          correct_answer: 'Nicotine',
-          incorrect_answers: ['Mescaline', 'Cyanide', 'Psilocybin'],
-        },
-        {
-          category: 'General Knowledge',
-          type: 'multiple',
-          difficulty: 'easy',
-          question:
-            'What was the first ever London Underground line to be built?',
-          correct_answer: 'Metropolitan Line',
-          incorrect_answers: ['Circle Line', 'Bakerloo Line', 'Victoria Line'],
-        },
-      ]
-      defalut.forEach((data, i) => {
+      list.forEach((data, i) => {
         const { question, correct_answer, incorrect_answers } = data
         const incorrect = map(incorrect_answers, (choice) => String(choice))
         obj[i + 1] = {
