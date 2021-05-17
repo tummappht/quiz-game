@@ -71,9 +71,11 @@ const SummaryContainers = (props) => {
                       {isCorrect ? <CorrectIcon /> : <WrongIcon />}
                     </AnswerText>
                     {!isCorrect && (
-                      <p>
-                        Correct answer: {correct_answer} <CorrectIcon />
-                      </p>
+                      <AnswerText>
+                        <label>Correct answer:</label>
+                        <p>{correct_answer}</p>
+                        <CorrectIcon />
+                      </AnswerText>
                     )}
                   </ListItem>
                 </Fragment>
