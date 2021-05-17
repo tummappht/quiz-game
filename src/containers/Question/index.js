@@ -1,87 +1,130 @@
-import React, { useState, useMemo, useCallback } from 'react'
-import PropTypes from 'prop-types'
-import { Card, CardContent, CardActions, Button, Grid } from '@material-ui/core'
-import { FadeIn } from './index.style'
-import { getQuestions } from 'api/question'
-
+import React, { useState, useMemo, useCallback, useEffect } from 'react'
+import get from 'lodash/get'
+import isEmpty from 'lodash/isEmpty'
+import map from 'lodash/map'
+import Card from '@material-ui/core/Card'
+import FadeIn from 'common/FadeIn'
+import { CardContent, CardAction } from 'common/Card'
+import QuestionWrapper from './question.components'
+import ActionWrapper from './action.components'
+import LoadingComponents from './loading.components'
+import { getQuestions, getCategories } from 'api/question'
+import { useRecoilState } from 'recoil'
+import { questionState } from 'recoil/app'
 const initialState = {
-  question: [],
+  list: [],
   isLoading: true,
 }
 
 const QuestionContainers = (props) => {
-  const { id } = props
-  const [questions, setQuestions] = useState(initialState.question)
+  const [categories, setCategories] = useState(initialState.list)
+  const [isLoading, setIsLoading] = useState(true)
+  const [questions, setQuestions] = useRecoilState(questionState)
 
-  const fetchQuestion = useCallback(async () => {
-    const options = {
-      category: 10,
-    }
-    await getQuestions({ options }).then((response) => {
-      const { results } = response
-      if (results) {
-        setQuestions(results)
+  const fetchCategories = useCallback(async () => {
+    setIsLoading(true)
+    await getCategories().then((response) => {
+      const { trivia_categories } = response
+      if (trivia_categories) {
+        setCategories(trivia_categories)
       }
+      setIsLoading(false)
     })
   }, [])
 
-  useMemo(() => {
-    fetchQuestion()
-  }, [fetchQuestion])
+  const handleSortQuestions = useCallback(
+    (list) => {
+      const obj = {}
+      const defalut = [
+        {
+          category: 'General Knowledge',
+          type: 'multiple',
+          difficulty: 'easy',
+          question:
+            'What does the &#039;S&#039; stand for in the abbreviation SIM, as in SIM card? ',
+          correct_answer: 'Subscriber',
+          incorrect_answers: ['Single', 'Secure', 'Solid'],
+        },
+        {
+          category: 'General Knowledge',
+          type: 'multiple',
+          difficulty: 'hard',
+          question:
+            'Which of the following chemicals are found in eggplant seeds?',
+          correct_answer: 'Nicotine',
+          incorrect_answers: ['Mescaline', 'Cyanide', 'Psilocybin'],
+        },
+        {
+          category: 'General Knowledge',
+          type: 'multiple',
+          difficulty: 'easy',
+          question:
+            'What was the first ever London Underground line to be built?',
+          correct_answer: 'Metropolitan Line',
+          incorrect_answers: ['Circle Line', 'Bakerloo Line', 'Victoria Line'],
+        },
+      ]
+      defalut.forEach((data, i) => {
+        const { question, correct_answer, incorrect_answers } = data
+        const incorrect = map(incorrect_answers, (choice) => String(choice))
+        obj[i + 1] = {
+          question: String(question),
+          correct_answer: String(correct_answer),
+          incorrect_answers: incorrect,
+        }
+      })
+      setQuestions(obj)
+    },
+    [setQuestions],
+  )
 
-  console.log(questions)
+  const fetchQuestion = useCallback(
+    async (id) => {
+      setIsLoading(true)
+      const options = {
+        category: id,
+      }
+      await getQuestions({ options }).then((response) => {
+        const { results } = response
+        if (results) {
+          handleSortQuestions(results)
+        }
+        setIsLoading(false)
+      })
+    },
+    [handleSortQuestions],
+  )
+
+  useMemo(() => {
+    fetchCategories()
+  }, [fetchCategories])
+
+  useEffect(() => {
+    if (!isEmpty(categories)) {
+      const random = categories[Math.floor(Math.random() * categories.length)]
+      const id = get(random, 'id', 9)
+      fetchQuestion(id)
+    }
+  }, [categories, fetchQuestion])
 
   return (
     <FadeIn>
-      <Card>
-        <CardContent>
-          <p>{id}/10</p>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <p>
-                Virgin Trains, Virgin Atlantic and Virgin Racing, are all
-                companies owned by which famous entrepreneur?
-              </p>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Button>xs</Button>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Button>xs</Button>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Button>xs</Button>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Button>xs</Button>
-            </Grid>
-          </Grid>
-        </CardContent>
-        <CardActions>
-          <Grid container spacing={5} justify="space-between">
-            <Grid item>
-              <Button>Back</Button>
-            </Grid>
-            <Grid item>
-              <Button>Next</Button>
-            </Grid>
-          </Grid>
-        </CardActions>
+      <Card style={{ marginTop: '5em' }}>
+        {isLoading ? (
+          <LoadingComponents />
+        ) : (
+          <>
+            <CardContent>
+              <QuestionWrapper questions={questions} />
+            </CardContent>
+            <CardAction>
+              <ActionWrapper />
+            </CardAction>
+          </>
+        )}
       </Card>
     </FadeIn>
   )
-}
-
-QuestionContainers.defaultProps = {
-  match: {
-    path: '',
-  },
-}
-
-QuestionContainers.propTypes = {
-  match: PropTypes.shape({
-    path: PropTypes.string,
-  }),
 }
 
 export default QuestionContainers

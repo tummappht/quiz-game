@@ -8,8 +8,8 @@
       "containers/*": [
         "./containers/*"
       ],
-      "components/*": [
-        "./components/*"
+      "common/*": [
+        "./common/*"
       ],
       "helper/*": [
         "./helper/*"
@@ -17,8 +17,8 @@
       "pages/*": [
         "./pages/*"
       ],
-      "redux/*": [
-        "./redux/*"
+      "recoil/*": [
+        "./recoil/*"
       ]
     }
   }

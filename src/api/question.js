@@ -1,23 +1,42 @@
 import axios from 'axios'
-import get from 'lodash/get'
 
 export const client = axios.create({
+  baseURL: 'https://opentdb.com/',
   headers: {
     Accept: 'application/json',
   },
   responseType: 'json',
 })
 
+export const getCategories = async () => {
+  try {
+    return await client
+      .get('api_category.php')
+      .then((response) => {
+        const { data } = response
+        return data
+      })
+      .catch((error) => {
+        console.log(error)
+        return error
+      })
+  } catch (error) {
+    console.error('error', error)
+    return error
+  }
+}
+
 export const getQuestions = async ({ options }) => {
   const params = {
     ...options,
     amount: 10,
     type: 'multiple',
+    encode: 'base64',
   }
 
   try {
     return await client
-      .get('https://opentdb.com/api.php', {
+      .get('api.php', {
         params,
       })
       .then((response) => {
@@ -26,7 +45,6 @@ export const getQuestions = async ({ options }) => {
         return data
       })
       .catch((error) => {
-        // const { response } = error
         console.log(error)
         return error
       })

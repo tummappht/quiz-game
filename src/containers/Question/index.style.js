@@ -1,20 +1,18 @@
-import styled, { keyframes } from 'styled-components'
+import styled from 'styled-components'
+import Button from '@material-ui/core/Button'
 
-const fadeInOpacity = keyframes`
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+export const QuestionNo = styled.p`
+  font-size: 24px;
+  margin: 0 0 24px;
+  text-align: center;
 `
 
-export const FadeIn = styled.div`
-  opacity: 1;
-  animation: infinite;
-  animation-name: ${fadeInOpacity};
-  animation-duration: 0.5s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: 1;
-  flex-grow: 1;
+export const QuestionText = styled.h5`
+  font-size: 30px;
+  margin: 0 0 30px;
+`
+
+export const AnswerButton = styled(Button)`
+  width: 100%;
+  height: 100%;
 `

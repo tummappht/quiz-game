@@ -1,33 +1,19 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
 import QuestionContainers from 'containers/Question'
-import get from 'lodash/get'
-
-const QuestionPage = (props) => {
-  const { match } = props
-  const id = get(match, 'params.id', '')
+import { useRecoilValue } from 'recoil'
+import { numberState } from 'recoil/app'
+const QuestionPage = () => {
+  const number = useRecoilValue(numberState)
 
   return (
     <HelmetProvider>
       <Helmet>
-        <title>Question #{id}</title>
+        <title>Question #{String(number)}</title>
       </Helmet>
-      <QuestionContainers id={id} />
+      <QuestionContainers />
     </HelmetProvider>
   )
-}
-
-QuestionPage.defaultProps = {
-  match: {
-    path: '',
-  },
-}
-
-QuestionPage.propTypes = {
-  match: PropTypes.shape({
-    path: PropTypes.string,
-  }),
 }
 
 export default QuestionPage
