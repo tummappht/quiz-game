@@ -37,10 +37,10 @@ const QuestionContainers = (props) => {
       const obj = {}
       list.forEach((data, i) => {
         const { question, correct_answer, incorrect_answers } = data
-        const incorrect = map(incorrect_answers, (choice) => String(choice))
+        const incorrect = map(incorrect_answers, (choice) => atob(choice))
         obj[i + 1] = {
-          question: String(question),
-          correct_answer: String(correct_answer),
+          question: atob(question),
+          correct_answer: atob(correct_answer),
           incorrect_answers: incorrect,
         }
       })
