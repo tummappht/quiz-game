@@ -32,16 +32,31 @@ const QuestionContainers = (props) => {
     })
   }, [])
 
+  const handleRandAnswer = ({ correct, incorrect }) => {
+    const answers = map(incorrect, (list) => list)
+    answers.push(correct)
+
+    let rand = []
+    while (answers.length > 0) {
+      var randKey = Math.floor(Math.random() * answers.length)
+      rand.push(answers[randKey])
+      answers.splice(randKey, 1)
+    }
+    return rand
+  }
+
   const handleSortQuestions = useCallback(
     (list) => {
       const obj = {}
       list.forEach((data, i) => {
         const { question, correct_answer, incorrect_answers } = data
+        const correct = atob(correct_answer)
         const incorrect = map(incorrect_answers, (choice) => atob(choice))
+
         obj[i + 1] = {
           question: atob(question),
-          correct_answer: atob(correct_answer),
-          incorrect_answers: incorrect,
+          correct_answer: correct,
+          answers: handleRandAnswer({ correct, incorrect }),
         }
       })
       setQuestions(obj)

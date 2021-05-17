@@ -5,17 +5,13 @@ import AnswerWrapper from './answer.components'
 import { useRecoilValue } from 'recoil'
 import { questionState, numberState } from 'recoil/app'
 import get from 'lodash/get'
-import map from 'lodash/map'
 
 const QuestionComponents = (props) => {
   const questions = useRecoilValue(questionState)
   const number = useRecoilValue(numberState)
   const length = Object.keys(questions).length
   const question = get(questions, number, {})
-  const incorrect_answers = get(question, 'incorrect_answers', {})
-  const correct_answer = get(question, 'correct_answer', '')
-  const answers = map(incorrect_answers, (list) => list)
-  answers.push(correct_answer)
+  const answers = get(question, 'answers', [])
 
   return (
     <>
