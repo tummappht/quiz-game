@@ -16,6 +16,21 @@ export const answerState = atom({
   default: new Map(),
 })
 
+export const difficultyState = atom({
+  key: 'difficulty',
+  default: 'medium',
+})
+
+export const questionLengthState = selector({
+  key: 'questionLengthState',
+  get: ({ get }) => {
+    const question = get(questionState)
+    const length = Object.keys(question).length
+
+    return length
+  },
+})
+
 export const isEmptyAnswerState = selector({
   key: 'isEmptyAnswer',
   get: ({ get }) => {
@@ -30,8 +45,7 @@ export const isEmptyAnswerState = selector({
 export const isCompletedState = selector({
   key: 'isCompletedState',
   get: ({ get }) => {
-    const question = get(questionState)
-    const length = Object.keys(question).length
+    const length = get(questionLengthState)
     const answerMap = get(answerState)
     const number = get(numberState)
     const size = answerMap.size

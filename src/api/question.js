@@ -28,10 +28,10 @@ export const getCategories = async () => {
 
 export const getQuestions = async ({ options }) => {
   const params = {
-    ...options,
     amount: 10,
     type: 'multiple',
     encode: 'base64',
+    ...options,
   }
 
   try {

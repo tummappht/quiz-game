@@ -15,7 +15,7 @@ const HomeContainers = () => {
           color="primary"
           className="btn"
           onClick={() => {
-            history.push('/question')
+            history.push('/difficulty')
           }}
         >
           Start

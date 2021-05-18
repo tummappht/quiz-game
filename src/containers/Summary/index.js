@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useMemo, useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
 import gets from 'lodash/get'
 import map from 'lodash/map'
@@ -22,18 +22,24 @@ const WrongIcon = () => {
 }
 
 const SummaryContainers = (props) => {
-  // const questions = useRecoilValue(questionState)
   const [questions, setQuestions] = useRecoilState(questionState)
   const [answers, setAnswers] = useRecoilState(answerState)
+
   const setNumber = useSetRecoilState(numberState)
   const history = useHistory()
 
-  const handlePlayAgain = async () => {
+  const handlePlayAgain = useCallback(async () => {
     await setQuestions({})
     await setAnswers(new Map())
     await setNumber(1)
-    history.push('/question')
-  }
+    history.push('/difficulty')
+  }, [history, setAnswers, setNumber, setQuestions])
+
+  useMemo(() => {
+    if (answers.size <= 0) {
+      history.push('/difficulty')
+    }
+  }, [answers.size, history])
 
   return (
     <FadeIn>

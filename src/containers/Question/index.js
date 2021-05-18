@@ -9,8 +9,8 @@ import QuestionWrapper from './question.components'
 import ActionWrapper from './action.components'
 import LoadingComponents from './loading.components'
 import { getQuestions, getCategories } from 'api/question'
-import { useRecoilState } from 'recoil'
-import { questionState } from 'recoil/app'
+import { useRecoilState, useRecoilValue } from 'recoil'
+import { difficultyState, questionState } from 'recoil/app'
 const initialState = {
   list: [],
   isLoading: true,
@@ -20,17 +20,20 @@ const QuestionContainers = (props) => {
   const [categories, setCategories] = useState(initialState.list)
   const [isLoading, setIsLoading] = useState(true)
   const [questions, setQuestions] = useRecoilState(questionState)
+  const difficulty = useRecoilValue(difficultyState)
 
   const fetchCategories = useCallback(async () => {
-    setIsLoading(true)
     await getCategories().then((response) => {
       const { trivia_categories } = response
       if (trivia_categories) {
         setCategories(trivia_categories)
       }
-      setIsLoading(false)
     })
   }, [])
+
+  useMemo(() => {
+    fetchCategories()
+  }, [fetchCategories])
 
   const handleRandAnswer = ({ correct, incorrect }) => {
     const answers = map(incorrect, (list) => list)
@@ -64,34 +67,51 @@ const QuestionContainers = (props) => {
     [setQuestions],
   )
 
-  const fetchQuestion = useCallback(
-    async (id) => {
-      setIsLoading(true)
-      const options = {
-        category: id,
-      }
-      await getQuestions({ options }).then((response) => {
-        const { results } = response
-        if (results) {
-          handleSortQuestions(results)
+  const handleNotFound = (categoryId) => {
+    setCategories((prev) => {
+      const newCategories = []
+      map(prev, (category) => {
+        const thisCategoryId = get(category, 'id', 0)
+        if (categoryId !== thisCategoryId) {
+          newCategories.push(category)
         }
-        setIsLoading(false)
+      })
+      return newCategories
+    })
+  }
+
+  const fetchQuestion = useCallback(
+    async (props) => {
+      setIsLoading(true)
+      const options = props
+      await getQuestions({ options }).then((response) => {
+        const { response_code, results, status } = response
+        if (status === 200) {
+          if (response_code === 0) {
+            handleSortQuestions(results)
+            setIsLoading(false)
+          } else {
+            const optionCategoryId = get(options, 'category', 0)
+            handleNotFound(optionCategoryId)
+          }
+        }
       })
     },
     [handleSortQuestions],
   )
 
-  useMemo(() => {
-    fetchCategories()
-  }, [fetchCategories])
-
   useEffect(() => {
     if (!isEmpty(categories)) {
       const random = categories[Math.floor(Math.random() * categories.length)]
       const id = get(random, 'id', 9)
-      fetchQuestion(id)
+
+      const options = {
+        category: id,
+        difficulty,
+      }
+      fetchQuestion(options)
     }
-  }, [categories, fetchQuestion])
+  }, [categories, difficulty, fetchQuestion])
 
   return (
     <FadeIn>
